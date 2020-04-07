@@ -3115,8 +3115,7 @@ Tomcat Server处理一个HTTP请求的过程 。
 ### 常用插件
 &emsp;&emsp;Maven Helper 、FindBugs-IDEA、阿里巴巴代码规约检测、GsonFormat、Lombok plugin、.ignore、Mybatis plugin
 # 高级篇
-## 新技术  
-### Java 8
+
 
 
 
