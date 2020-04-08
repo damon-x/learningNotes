@@ -3115,6 +3115,163 @@ Tomcat Server处理一个HTTP请求的过程 。
 ### 常用插件
 &emsp;&emsp;Maven Helper 、FindBugs-IDEA、阿里巴巴代码规约检测、GsonFormat、Lombok plugin、.ignore、Mybatis plugin
 # 高级篇
+## 新技术  
+### Java 8
+#### lambda表达式
+使用函数式接口：可以适用于Lambda使用的接口。只有确保接口中有且仅有一个抽象方法。  
+无参无返回：
+```java
+@FunctionalInterface   //此注解加了可以强制检查接口是否满足函数式接口规范，不加此注解也可以
+public interface Eatable {
+    public abstract void eat();
+}
+
+public class Test {     
+    private static void doSomething(Eatable eatable){    
+        eatable.eat();    
+        }     
+        public static void main(String[] args) {              
+            doSomething(()-> System.out.println("厉害了我的国"));    
+        }
+}
+```
+有参有返回:  
+```java
+public interface Sumable {
+    int sum(int a, int b);
+}
+
+public class Test {     
+    private static int sum(Sumable sumable,int a,int b){        
+        return sumable.sum(a,b);    
+    }     
+    public static void main(String[] args) {        
+        System.out.println(sum((x,y)->(x + y),5,3));    
+    }
+}
+```
+#### 时间API
+&emsp;&emsp;Java 8 在 java.time 包下提供了很多新的 API。新的java.time包涵盖了所有处理日期，时间，日期/时间，时区，时刻（instants），过程（during）与时钟（clock）的操作。以下为两个比较重要的 API：  
++ Local(本地) − 简化了日期时间的处理，没有时区的问题。
++ Zoned(时区) − 通过制定的时区处理日期时间。
+```java
+public class Java8Time {
+	public static void main(String args[]){
+	      Java8Time java8tester = new Java8Time();
+	      java8tester.testLocalDateTime();
+	   }
+	    
+	   public void testLocalDateTime(){
+	    
+	      // 获取当前的日期时间
+	      LocalDateTime currentTime = LocalDateTime.now();
+	      System.out.println("当前时间: " + currentTime);
+	        
+	      LocalDate date1 = currentTime.toLocalDate();
+	      System.out.println("date1: " + date1);
+	        
+	      Month month = currentTime.getMonth();
+	      int day = currentTime.getDayOfMonth();
+	      int seconds = currentTime.getSecond();
+	        
+	      System.out.println("月: " + month +", 日: " + day +", 秒: " + seconds);
+	        
+	      LocalDateTime date2 = currentTime.withDayOfMonth(10).withYear(2012);
+	      System.out.println("date2: " + date2);
+	        
+	      // 12 december 2014
+	      LocalDate date3 = LocalDate.of(2014, Month.DECEMBER, 12);
+	      System.out.println("date3: " + date3);
+	        
+	      // 22 小时 15 分钟
+	      LocalTime date4 = LocalTime.of(22, 15);
+	      System.out.println("date4: " + date4);
+	        
+	      // 解析字符串
+	      LocalTime date5 = LocalTime.parse("20:15:30");
+	      System.out.println("date5: " + date5);
+	      
+	      //常用格式化
+	      String date6 = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
+	      System.out.println("date6: " + date6);
+
+	      String date7 = DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.of(2017, 1, 1));
+	      System.out.println("date7: " + date7);
+	      
+	      String date8 = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.of(2017, 1, 1, 9, 10, 0));
+	      System.out.println("date8: " + date8);
+	      
+	      String date9 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
+	      System.out.println("date9: " + date9);
+	      
+	   }
+}
+```
+结果：
+<pre>
+当前时间: 2020-04-08T21:27:50.196
+date1: 2020-04-08
+月: APRIL, 日: 8, 秒: 50
+date2: 2012-04-10T21:27:50.196
+date3: 2014-12-12
+date4: 22:15
+date5: 20:15:30
+date6: 2020-04-08
+date7: 20170101
+date8: 2017-01-01T09:10:00
+date9: 2020-04-08 21:27:50
+</pre>
+### Java 9
+#### Jigsaw、Jshell、Reactive Streams
+### Java 10
+#### 局部变量类型推断、G1的并行Full GC、ThreadLocal握手机制
+### Java 11
+#### ZGC、Epsilon、增强var、
+### Spring 5
+#### 响应式编程
+&emsp;&emsp;响应式编程就是基于reactor的思想，当你做一个带有一定延迟的才能够返回的io操作时，不会阻塞，而是立刻返回一个流，并且订阅这个流，当这个流上产生了返回数据，可以立刻得到通知并调用回调函数处理数据。    
+### Spring Boot 2.0
+### http/2
+### http/3
+### 性能优化
+&emsp;&emsp;使用单例、使用Future模式、使用线程池、选择就绪、减少上下文切换、减少锁粒度、数据压缩、结果缓存
+### 线上问题分析
+#### dump获取
+一、dump基本概念  
+&emsp;&emsp;在故障定位(尤其是out of memory)和性能分析的时候，经常会用到一些文件来帮助我们排除代码问题。这些文件记录了JVM运行期间的内存占用、线程执行等情况，这就是我们常说的dump文件。常用的有heap dump和thread dump（也叫javacore，或java dump）。我们可以这么理解：heap dump记录内存信息的，thread dump是记录CPU信息的。   
+heap dump：  
+&emsp;&emsp;heap dump文件是一个二进制文件，它保存了某一时刻JVM堆中对象使用情况。HeapDump文件是指定时刻的Java堆栈的快照，是一种镜像文件。Heap Analyzer工具通过分析HeapDump文件，哪些对象占用了太多的堆栈空间，来发现导致内存泄露或者可能引起内存泄露的对象。  
+thread dump：  
+&emsp;&emsp;thread dump文件主要保存的是java应用中各线程在某一时刻的运行的位置，即执行到哪一个类的哪一个方法哪一个行上。thread dump是一个文本文件，打开后可以看到每一个线程的执行栈，以stacktrace的方式显示。通过对thread dump的分析可以得到应用是否“卡”在某一点上，即在某一点运行的时间太长，如数据库查询，长期得不到响应，最终导致系统崩溃。单个的thread dump文件一般来说是没有什么用处的，因为它只是记录了某一个绝对时间点的情况。比较有用的是，线程在一个时间段内的执行情况。    
+&emsp;&emsp;两个thread dump文件在分析时特别有效，困为它可以看出在先后两个时间点上，线程执行的位置，如果发现先后两组数据中同一线程都执行在同一位置，则说明此处可能有问题，因为程序运行是极快的，如果两次均在某一点上，说明这一点的耗时是很大的。通过对这两个文件进行分析，查出原因，进而解决问题。    
+
+二、dump获取方式    
+&emsp;&emsp;使用的JDK工具在JDK_HOME/bin/目录下，使用到jmap和jstack这两个命令。    
+1.获取heap dump文件     
+&emsp;&emsp;windows下切换到JDK_HOME/bin/，执行以下命令：jmap -dump:format=b,file=heap.hprof 2576     
+&emsp;&emsp;inux下切换到JDK_HOME/bin/，执行以下命令：./jmap -dump:format=b,file=heap.hprof 2576       
+&emsp;&emsp;这样就会在当前目录下生成heap.hprof文件，这就是heap dump文件。      
+2.获取thread dump文件    
+&emsp;&emsp;windows下执行：jstack 2576 > thread.txt     
+&emsp;&emsp;linux下执行：./jstack 2576 > thread.txt    
+&emsp;&emsp;windows/linux则会将命令执行结果转储到thread.txt，这就是thread dump文件。有了dump文件后，我们就能借助性能分析工具获取dump文件中的信息。     
+3.如果我们只需要将dump中存活的对象导出，那么可以使用:live参数      
+&emsp;&emsp;jmap -dump:live,format=b,file=heapLive.hprof 2576     
+&emsp;&emsp;执行完后，我们在当前目录C:\Java\jdk1.6.0_27\bin下看到刚生成的三个文件。     
+
+三、使用工具分析dump文件     
+&emsp;&emsp;现在我们使用一些图形化工具，来帮助我们分析文件中的信息，有效地定位问题。       
+3.1 使用JDK自带的jhat命令     
+&emsp;&emsp;jhat是用来分析java堆的命令，可以将堆中的对象以html的形式显示出来，包括对象的数量，大小等等，并支持对象查询语言。   
+&emsp;&emsp;执行命令：jhat -port 9010 heapLive.hprof     
+&emsp;&emsp;当服务启动完成后，我们就可以在浏览器中，通过http://localhost:9010/进行访问。     
+3.2 使用eclipse MAT工具    
+&emsp;&emsp;一般来说，应用程序的dump文件都是很大的，jdk自带命令难以分析这些大文件。在实际的生产环境下，我们必须要借助第三方工具，才能快速打开这些大文件，进行分析定位。eclipse memory analyzer是一款优秀的heap分析工具，能够帮我们快速定位内存泄露问题。
+#### dump分析 
+&emsp;&emsp;自己编写各种outofmemory，stackoverflow程序：HeapOutOfMemory、 Young OutOfMemory、MethodArea OutOfMemory、 ConstantPool OutOfMemory、DirectMemory OutOfMemory、Stack OutOfMemory Stack OverFlow   
+### Arthas
+&emsp;&emsp;Arthas 是 Alibaba 在 2018 年 9 月开源的 Java 诊断工具。支持 JDK6+， 采用命令行交互模式，提供 Tab 自动不全，可以方便的定位和诊断线上程序运行问题。截至本篇文章编写时，已经收获 Star 17000+。开源地址：https://github.com/alibaba/arthas 、官方文档：https://alibaba.github.io/arthas
+##### jvm相关、class/classloader相关、monitor/watch/trace相关、options、管道、后台异步任务。文档：https://alibaba.github.io/arthas/advanced-use.html
 
 
 
@@ -3260,3 +3417,5 @@ https://blog.csdn.net/hustspy1990/article/details/93385286
 Tomcat  
 https://blog.csdn.net/u014231646/article/details/79482195  
 
+java内存工具  
+https://blog.csdn.net/u013851082/article/details/53665117  
