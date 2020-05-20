@@ -1,0 +1,14 @@
+持久化
+1 rdb （redis databus） 
+  保存的是dump.rdb文件 配置在snapshot下
+  SHUTDOWN 时也会刷新dump文件
+  save命令立即刷新dump
+  bgsave命令后台异步刷新dump
+  缺点：异常停止时最后一次备份会失败
+
+2 aof （append only file）
+  配置在 APPEND ONLY MODE 下
+  以日志形式记录所有写操作，包括 flushall，重启时 重新执行这些操作
+  当aof文件大小达到某个阈值时，redis会启动aof文件内容压缩，在后台异步重写aof文件，保留可以恢复数据的最小指令，
+  
+aof和rdb可以同时存在，aof日志文件在服务启动时先被加载，如果文件出错将启动失败，可以用redis-check-aof工具修复aof文件，删除不规范日志。
