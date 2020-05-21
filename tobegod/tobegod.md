@@ -230,7 +230,7 @@ public class switchDemoString {
     ```
     + 异常原理：加强for循环是用Iterator实现的语法糖，在执行next()方法时，会比较集合实际修改次数和期望修改次数，在remove操作时实际修改次数+1，但期望修改次数没变，不同，则直接抛异常。
     + fail-safe：将原有的数据复制一份，在拷贝上操作。为了避免触发fail-fast机制，导致异常，可以使用Java中提供的一些采用了fail-safe机制的集合类。这样的集合容器在遍历时不是直接在集合内容上访问的，而是先复制原有集合内容，在拷贝的集合上进行遍历。java.util.concurrent包下的容器都是fail-safe的，可以在多线程下并发使用，并发修改。同时也可以在foreach中进行add/remove 。
-+ CopyOnWriteArrayList：Copy-On-Write简称COW，是一种用于程序设计中的优化策略。其基本思路是，从一开始大家都在共享同一个内容，当某个人想要修改这个内容的时候，才会真正把内容Copy出去形成一个新的内容然后再改，这是一种延时懒惰策略。从JDK1.5开始Java并发包里提供了两个使用CopyOnWrite机制实现的并发容器,它们是CopyOnWriteArrayList和CopyOnWriteArraySet。CopyOnWrite容器非常有用，可以在非常多的并发场景中使用到。CopyOnWriteArrayList相当于线程安全的ArrayList，CopyOnWriteArrayList使用了一种叫写时复制的方法，当有新元素add到CopyOnWriteArrayList时，先从原有的数组中拷贝一份出来，然后在新的数组做写操作，写完之后，再将原来的数组引用指向到新数组。这样做的好处是可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。注意：CopyOnWriteArrayList的整个add操作都是在锁的保护下进行的。也就是说add方法是线程安全的。CopyOnWrite并发容器用于读多写少的并发场景。比如白名单，黑名单，商品类目的访问和更新场景。和ArrayList不同的是，它具有以下特性：支持高效率并发且是线程安全的 因为通常需要复制整个基础数组，所以可变操作（add()、set() 和 remove() 等等）的开销很大 迭代器支持hasNext(), next()等不可变操作，但不支持可变 remove()等操作 使用迭代器进行遍历的速度很快，并且不会与其他线程发生冲突。在构造迭代器时，迭代器依赖于不变的数组快照
++ ：CCopyOnWriteArrayListopy-On-Write简称COW，是一种用于程序设计中的优化策略。其基本思路是，从一开始大家都在共享同一个内容，当某个人想要修改这个内容的时候，才会真正把内容Copy出去形成一个新的内容然后再改，这是一种延时懒惰策略。从JDK1.5开始Java并发包里提供了两个使用CopyOnWrite机制实现的并发容器,它们是CopyOnWriteArrayList和CopyOnWriteArraySet。CopyOnWrite容器非常有用，可以在非常多的并发场景中使用到。CopyOnWriteArrayList相当于线程安全的ArrayList，CopyOnWriteArrayList使用了一种叫写时复制的方法，当有新元素add到CopyOnWriteArrayList时，先从原有的数组中拷贝一份出来，然后在新的数组做写操作，写完之后，再将原来的数组引用指向到新数组。这样做的好处是可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。注意：CopyOnWriteArrayList的整个add操作都是在锁的保护下进行的。也就是说add方法是线程安全的。CopyOnWrite并发容器用于读多写少的并发场景。比如白名单，黑名单，商品类目的访问和更新场景。和ArrayList不同的是，它具有以下特性：支持高效率并发且是线程安全的 因为通常需要复制整个基础数组，所以可变操作（add()、set() 和 remove() 等等）的开销很大 迭代器支持hasNext(), next()等不可变操作，但不支持可变 remove()等操作 使用迭代器进行遍历的速度很快，并且不会与其他线程发生冲突。在构造迭代器时，迭代器依赖于不变的数组快照
 + ConcurrentSkipListMap：ConcurrentSkipListMap是一个内部使用跳表，并且支持排序和并发的一个Map，是线程安全的。在普通的顺序链表中查询一个元素，需要从链表头部开始一个一个节点进行遍历，然后找到节点。跳表是一种使用”空间换时间”的概念用来提高查询效率的链表。一种数据结构，基本原理是并非一个一个向下找，二是根据已维护的排序信息，每次间隔若干个元素向下找。
 ### 枚举 
  + 作用：相比于静态常量，枚举的可读性和安全性高一些。类型安全，普通int型常量在做判断时可以传入任何int值，而枚举只能传入枚举中有的对象。
@@ -353,6 +353,7 @@ public class Main {
 + 动态代理的实现方式：1、JDK动态代理：java.lang.reflect 包中的Proxy类和InvocationHandler接口提供了生成动态代理类的能力。2、Cglib动态代理：Cglib (Code Generation Library )是一个第三方代码生成类库，运行时在内存中动态生成一个子类对象从而实现对目标对象功能的扩展。JDK动态代理和Cglib动态代理的区别：JDK的动态代理有一个限制，就是使用动态代理的对象必须实现一个或多个接口。如果想代理没有实现接口的类，就可以使用CGLIB实现。Cglib是一个强大的高性能的代码生成包，它可以在运行期扩展Java类与实现Java接口。它广泛的被许多AOP的框架使用，例如Spring AOP和dynaop，为他们提供方法的interception（拦截）。Cglib包的底层是通过使用一个小而快的字节码处理框架ASM，来转换字节码并生成新的类。不鼓励直接使用ASM，因为它需要你对JVM内部结构包括class文件的格式和指令集都很熟悉。Cglib与动态代理最大的区别就是：使用动态代理的对象必须实现一个或多个接口，使用cglib代理的对象则无需实现接口，达到代理类无侵入。
 + Java实现动态代理的大致步骤：1、定义一个委托类和公共接口。2、自己定义一个类（调用处理器类，即实现 InvocationHandler 接口），这个类的目的是指定运行时将生成的代理类需要完成的具体任务（包括Preprocess和Postprocess），即代理类调用任何方法都会经过这个调用处理器类（在本文最后一节对此进行解释）。3、生成代理对象（当然也会生成代理类），需要为他指定(1)委托对象(2)实现的一系列接口(3)调用处理器类的实例。因此可以看出一个代理对象对应一个委托对象，对应一个调用处理器实例
 + Java 实现动态代理主要涉及哪几个类：java.lang.reflect.Proxy: 这是生成代理类的主类，通过 Proxy 类生成的代理类都继承了 Proxy 类，即 DynamicProxyClass extends Proxy。java.lang.reflect.InvocationHandler: 这里称他为"调用处理器"，他是一个接口，动态生成的代理类需要完成的具体内容需要自己定义一个类，而这个类必须实现 InvocationHandler 接口。
++ jdk动态代理的大致逻辑即是，传入代理类 类加载器，与接口数组和自定义的InvocationHandler，然后通过分析接口信息生成java文件的字节码数据，然后调用本地方法将类加载到内存中，最后返回构造参数为InvocationHandler的代理类，该类实现代理接口，并继承Proxy类（所以jdk动态代理只能代理接口，java单继承），我们调用方法实际上是调用代理类的方法，代理类则可以通过我们传入的InvocationHandler反射调用原本的方法来实现无侵入的修改原有方法逻辑。
 + 动态代理实现：使用动态代理实现功能：不改变Test类的情况下，在方法target 之前打印一句话，之后打印一句话。
 ```java
 public class UserServiceImpl implements UserService {
@@ -434,6 +435,12 @@ public class DoCGLib {
 }
 ```
 + AOP：Spring AOP中的动态代理主要有两种方式，JDK动态代理和CGLIB动态代理。JDK动态代理通过反射来接收被代理的类，并且要求被代理的类必须实现一个接口。JDK动态代理的核心是InvocationHandler接口和Proxy类。如果目标类没有实现接口，那么Spring AOP会选择使用CGLIB来动态代理目标类。CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成某个类的子类，注意，CGLIB是通过继承的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLIB做动态代理的。
++ JDK动态代理和Gglib动态代理的区别：
+1. JDK动态代理是实现了被代理对象的接口，Cglib是继承了被代理对象。
+2. JDK和Cglib都是在运行期生成字节码，JDK是直接写Class字节码，Cglib使用ASM框架写Class字节码，Cglib代理实现更复杂，生成代理类比JDK效率低。
+3. JDK调用代理方法，是通过反射机制调用，Cglib是通过FastClass机制直接调用方法，Cglib执行效率更高。
+
+
 ### 序列化
 + 序列化与反序列化：序列化是将对象转换为可传输格式的过程。 是一种数据的持久化手段。一般广泛应用于网络传输，RMI和RPC等场景中。反序列化是序列化的逆操作。序列化是将对象的状态信息转换为可存储或传输的形式的过程。一般是以字节码或XML格式传输。而字节码或XML编码格式可以还原为完全相等的对象。这个相反的过程称为反序列化。
 + 序列化目的：1、可传输。2、持久化。在Java中，对象的序列化与反序列化被广泛应用到RMI(远程方法调用)及网络传输中。
@@ -1452,6 +1459,9 @@ public class DeadLockDemo implements Runnable{
 + Lock可以提高多个线程进行读操作的效率。（可以通过readwritelock实现读写分离）
 + 在性能上来说，如果竞争资源不激烈，两者的性能是差不多的，而当竞争资源非常激烈时（即有大量线程同时竞争），此时Lock的性能要远远优于synchronized。所以说，在具体使用时要根据适当情况选择。
 + synchronized使用Object对象本身的wait 、notify、notifyAll调度机制，而Lock可以使用Condition进行线程之间的调度。
+#### ReentrantLock
+ReentrantLock是基于AQS实现的，AQS的基础又是CAS  
+
 ### volatile
 #### 三个特点:   
 + 保证可见性  
@@ -1518,7 +1528,7 @@ public class MyVolatile {
 	
 }
 ```
-紧张指令重排  
+禁止指令重排  
 &emsp;&emsp;为了提高效率，编译器和处理器会对指令的执行顺序进行重排，处理器重排时会保证数据的依赖关系。单线程下，重排不会影响指令结果，而多线程则不同。  
 &emsp;&emsp;在如下代码中，线程分别执行change()方法和judge()方法，单线程下不论语句1和2谁先执行，结果都将打印2。而在多线程情况下，若线程A先执行了语句2而未执行语句1时，线程B执行了judge()方法，就会使a出现意料之外的结果。
 &emsp;&emsp;用volatile修饰a和b，可以解决这个问题，其原理时volatile的实现利用了CPU的内存屏障指令，内存屏障保证变量的可见性，并在对指定变量操作前后加屏障防止指令重排，具体屏蔽规则见详细资料，保险的方法是用volatile修饰所有逻辑相关的变量。
@@ -1549,7 +1559,7 @@ public void judge() {
 package temp.com.main;
 
 public class SingleDemo {
-	private static SingleDemo instance;
+	private static volatile SingleDemo instance;
 	public SingleDemo() {
 		System.out.println("构造方法");
 	}
@@ -1567,6 +1577,19 @@ public class SingleDemo {
 
 ```
 了解happens-before   
+&emsp;&emsp;两个操作间具有happens-before关系，并不意味着前一个操作必须要在后一个操作之前执行。happens-before仅仅要求前一个操作对后一个操作可见。   
+符合happens-before八条实例：
++ 单线程happen-before原则：在同一个线程中，书写在前面的操作happen-before后面的操作。
++ 锁的happen-before原则：同一个锁的unlock操作happen-before此锁的lock操作。
++ volatile的happen-before原则：对一个volatile变量的写操作happen-before对此变量的任意操作(当然也包括写操作了)。
++ happen-before的传递性原则：如果A操作 happen-before B操作，B操作happen-before C操作，那么A操作happen-before C操作。
++ 线程启动的happen-before原则：同一个线程的start方法happen-before此线程的其它方法。
++ 线程中断的happen-before原则：对线程interrupt方法的调用happen-before被中断线程的检测到中断发送的代码。
++ 线程终结的happen-before原则：线程中的所有操作都happen-before线程的终止检测。
++ 对象创建的happen-before原则：一个对象的初始化完成先于他的finalize方法调用。   
+
+&emsp;&emsp;程序员可以基于这个原则和这八个“定理”进行可见性的判断。
+
 volatile实现原理和存在理由     
 &emsp;&emsp;可见性的实现有两点：1、修改volatile变量时会强制将修改后的值刷新的主内存中。2、修改volatile变量后会导致其他线程工作内存中对应的变量值失效。因此，再读取该变量值的时候就需要重新从读取主内存中的值。    
 &emsp;&emsp;有序性是利用CPU内存屏障指令禁止改变操作顺序。     
@@ -1578,7 +1601,7 @@ volatile实现原理和存在理由
 &emsp;&emsp;sleep()方法必须传入参数，参数就是休眠时间，时间到了就会自动醒来。wait()方法可以传入参数也可以不传入参数，传入参数就是在参数结束的时间后不再wait进入就绪状态。   
 &emsp;&emsp;sleep方法必须要捕获异常，而wait方法不需要捕获异常。sleep方法属于Thread类中方法，表示让一个线程进入睡眠状态，等待一定的时间之后，自动醒来进入到可运行状态，不会马上进入运行状态，因为线程调度机制恢复线程的运行也需要时间，一个线程对象调用了sleep方法之后，并不会释放他所持有的所有对象锁，所以也就不会影响其他进程对象的运行。但在sleep的过程中过程中有可能被其他对象调用它的interrupt(),产生InterruptedException异常，如果你的程序不捕获这个异常，线程就会异常终止，进入TERMINATED状态，如果你的程序捕获了这个异常，那么程序就会继续执行catch语句块(可能还有finally语句块)以及以后的代码。
 wait属于Object的成员方法，一旦一个对象调用了wait方法，必须要采用notify()和notifyAll()方法唤醒该进程;如果线程拥有某个或某些对象的同步锁，那么在调用了wait()后，这个线程就会释放它持有的所有同步资源，而不限于这个被调用了wait()方法的对象。wait()方法也同样会在wait的过程中有可能被其他对象调用interrupt()方法而产生。    
-&emsp;&emsp;wait、notify和notifyAll方法只能在同步方法或者同步代码块中使用，而sleep方法可以在任何地方使用。因为wait方法是使一个线程进入等待状态，并且释放其所持有的锁对象，notify方法是通知等待该锁对象的线程重新获得锁对象，然而如果没有获得锁对象，wait方法和notify方法都是没有意义的，因此必须先获得锁对象再对锁对象进行进一步操作于是才要把wait方法和notify方法写到同步方法和同步代码块中了。由此可知，wait和notify、notifyAll方法是由确定的对象即锁对象来调用的，锁对象就像一个传话的人，他对某个线程说停下来等待，然后对另一个线程说你可以执行了（实质上是被捕获了），这一过程是线程通信。sleep方法是让某个线程暂停运行一段时间，其控制范围是由当前线程决定，运行的主动权是由当前线程来控制（拥有CPU的执行权）。其实两者的区别都是让线程暂停运行一段时间，但本质的区别一个是线程的运行状态控制，一个是线程间的通信。
+&emsp;&emsp;wait、notify和notifyAll方法只能在同步方法或者同步代码块中使用，知识在编译时不报错，运行时报错。而sleep方法可以在任何地方使用。因为wait方法是使一个线程进入等待状态，并且释放其所持有的锁对象，notify方法是通知等待该锁对象的线程重新获得锁对象，然而如果没有获得锁对象，wait方法和notify方法都是没有意义的，因此必须先获得锁对象再对锁对象进行进一步操作于是才要把wait方法和notify方法写到同步方法和同步代码块中了。由此可知，wait和notify、notifyAll方法是由确定的对象即锁对象来调用的，锁对象就像一个传话的人，他对某个线程说停下来等待，然后对另一个线程说你可以执行了（实质上是被捕获了），这一过程是线程通信。sleep方法是让某个线程暂停运行一段时间，其控制范围是由当前线程决定，运行的主动权是由当前线程来控制（拥有CPU的执行权）。其实两者的区别都是让线程暂停运行一段时间，但本质的区别一个是线程的运行状态控制，一个是线程间的通信。
 ### wait和notify
 &emsp;&emsp;wait()、notify()方法属于Object中的方法；对于Object中的方法，每个对象都拥有。   
 &emsp;&emsp;wait()方法：该方法用来使得当前线程进入等待状态，直到接到通知或者被中断打断为止。在调用wait()方法之前，线程必须要获得该对象的对象级锁；换句话说就是该方法只能在同步方法或者同步块中调用，如果没有持有合适的锁的话，线程将会抛出异常IllegalArgumentException。调用wait()方法之后，当前线程则释放锁。    
@@ -2217,12 +2240,16 @@ Class.forname()与ClassLoader.loadClass()：
 &emsp;&emsp;Class.forname()：是一个静态方法，最常用的是Class.forname(String className);根据传入的类的全限定名返回一个Class对象.该方法在将Class文件加载到内存的同时，会执行类的初始化。如： Class.forName("com.wang.HelloWorld");    
 &emsp;&emsp;ClassLoader.loadClass()：这是一个实例方法，需要一个ClassLoader对象来调用该方法，该方法将Class文件加载到内存时，并不会执行类的初始化，直到这个类第一次使用时才进行初始化.该方法因为需要得到一个ClassLoader对象，所以可以根据需要指定使用哪个类加载器.如：ClassLoader cl=.......;cl.loadClass("com.wang.HelloWorld");    
 ### 类加载过程
-Java 类加载的过程简介   
+Java 类加载的过程简介  
+&emsp;&emsp;首先，内从数据源加载到内存发生在这个类被使用时，比如实例化一个对象或者通过类名访问其静态资源时。所以再使用它们在前，即使这些class文件不存在程序也不会报错。  
 &emsp;&emsp;一般来说，我们把 Java 的类加载过程分为三个主要步骤：加载，连接，初始化，具体行为在 Java 虚拟机规范里有非常详细的定义。   
 &emsp;&emsp;首先是加载过程（Loading），它是 Java 将字节码数据从不同的数据源读取到 JVM 中，并映射为 JVM 认可的数据结构（Class 对象），这里的数据源可能是各种各样的形态，比如 jar 文件，class 文件，甚至是网络数据源等；如果输入数据不是 ClassFile 的结构，则会抛出 ClassFormatError。加载阶段是用户参与的阶段，我们可以自定义类加载器，去实现自己的类加载过程。   
 &emsp;&emsp;第二阶段是连接（Linking），这是核心的步骤，简单说是把原始的类定义信息平滑地转入 JVM 运行的过程中。这里可进一步细分成三个步骤：1，验证（Verification），这是虚拟机安全的重要保障，JVM 需要核验字节信息是符合 Java 虚拟机规范的，否则就被认为是 VerifyError，这样就防止了恶意信息或者不合规信息危害 JVM 的运行，验证阶段有可能触发更多 class 的加载。2，准备（Pereparation），创建类或者接口中的静态变量，并初始化静态变量的初始值。但这里的“初始化”和下面的显示初始化阶段是有区别的，侧重点在于分配所需要的内存空间，不会去执行更进一步的 JVM 指令。3，解析（Resolution），在这一步会将常量池中的符号引用（symbolic reference）替换为直接引用。在 Java 虚拟机规范中，详细介绍了类，接口，方法和字段等各方面的解析。    
-&emsp;&emsp;最后是初始化阶段（initialization），这一步真正去执行类初始化的代码逻辑，包括静态字段赋值的动作，以及执行类定义中的静态初始化块内的逻辑，编译器在编译阶段就会把这部分逻辑整理好，父类型的初始化逻辑优先于当前类型的逻辑。再来谈谈双亲委派模型，简单说就是当加载器（Class-Loader）试图加载某个类型的时候，除非父类加载器找不到相应类型，否则尽量将这个任务代理给当前加载器的父加载器去做。使用委派模型的目的是避免重复加载 Java 类型。    
-
+&emsp;&emsp;最后是初始化阶段（initialization），这一步真正去执行类初始化的代码逻辑，包括静态字段赋值的动作，以及执行类定义中的静态初始化块内的逻辑，编译器在编译阶段就会把这部分逻辑整理好，父类型的初始化逻辑优先于当前类型的逻辑。再来谈谈双亲委派模型，简单说就是当加载器（Class-Loader）试图加载某个类型的时候，除非父类加载器找不到相应类型，否则尽量将这个任务代理给当前加载器的父加载器去做。使用委派模型的目的是避免重复加载 Java 类型。     
+&emsp;&emsp;Java类成员变量、普通成员变量、初始化块、构造方法的初始化和执行顺序      
+结论：执行的大致顺序如下：   
+&emsp;&emsp;(1) 在一个不存在继承的类中：初始化static变量,执行static初始化块-->初始化普通成员变量(如果有赋值语句),执行普通初始化块-->构造方法   
+&emsp;&emsp;(2)在一个存在继承的类中：初始化父类static成员变量,运行父类static初始化块-->初始化子类static成员变量,运行子类static初始化块-->初始化父类实例成员变量(如果有赋值语句),执行父类普通初始化块-->父类构造方法-->初始化子类实例成员变量(如果有赋值语句)及普通初始化块-->子类构造方法。(通过断点查看代码执行顺序)    
 自定义类加载器的常见场景   
 &emsp;&emsp;实现类似进程内隔离，类加载器实际上用作不同的命名空间，以及提供类似容器，模块化的效果。例如：1，两个模块依赖于某个类库的不同版本，如果分别被不同的容器加载，就可以互不干扰。这个方面的集大成者是 Jave EE 和 OSGL，JPMS等框架。2，应用需要从不同的数据源获取类定义信息，例如网络数据源，而不是本地文件系统。3，或者是需要自己操纵字节码，动态修改生成类型。    
 &emsp;&emsp;我们可以总体上简单理解自定义类加载过程：1，通过指定名称，找到其二进制实现，这里往往就是自定义类加载器会“定制”的部分，例如，在特定数据源根据名字获取字节码，或者修改或生成字节码。2，然后，创建 Class 对象，并完成类加载过程。二进制信息到 class 对象的转换，通常就依赖 defineClass，我们无需自己实现，它是 final 方法。有了 Class 对象，后续完成加载过程就顺利成章了。  
@@ -2471,7 +2498,7 @@ public class Singleton {
 &emsp;&emsp;这种方式同样利用了classloader的机制来保证初始化instance时只有一个线程，它跟第三种和第四种方式细微的差别是前两种是只要Singleton类被装载了，那么instance就会被实例化，也就没有达到lazy loading效果，而这种方式是Singleton类被装载了，instance不一定被初始化。因为SingleHolder类没有被主动使用，只有显示通过调用getInstance方法时才会显示装载SingleHolder类，从而实例化instance。想象一下，如果实例化instance很消耗资源，我想让他延迟加载，另外一方面，我不希望在Singleton类加载时就实例化，因为我不能确保Singleton类还可能在其他的地方被主动使用从而被加载，那么这个时候实例化instance显然是不合适的。这个时候，这种方式相比第三和第四种方式就显得很合理。    
 第六种（枚举）：
 ```java
-public class Singleton {
+public enum Singleton {
     INSTANCE;
     public void whateverMethod() {
     
@@ -2503,8 +2530,8 @@ public class Singleton {
 ```java
 private static Class getClass(String classname)   throws ClassNotFoundException {     
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();     
-    if(classLoader == null)     
-        classLoader = Singleton.class.getClassLoader();     
+    if(classLoader == null)  { 
+        classLoader = Singleton.class.getClassLoader();        
       return (classLoader.loadClass(classname));     
    }     
 }  
@@ -3353,7 +3380,66 @@ insert into book (name,price) values ("first-book",2.37);
 语句优化，Update语句尽量只set需要修改的字段，否则带来没必要的开销；    
 语句优化，数据量大时（1万以上）尽量避免使用，游标；   
 ### MySQL 执行计划
-&emsp;&emsp;SQL执行计划，就是一条SQL语句，在数据库中实际执行的时候，一步步的分别都做了什么。了解SQL执行计划的意义就在于我们可以通过执行计划更加清晰的认识到这一条语句，分为了哪几步，有没有用到索引，是否有一些可优化的地方等。使用explain+sql 即可查看执行计划。
+&emsp;&emsp;SQL执行计划，就是一条SQL语句，在数据库中实际执行的时候，一步步的分别都做了什么。了解SQL执行计划的意义就在于我们可以通过执行计划更加清晰的认识到这一条语句，分为了哪几步，有没有用到索引，是否有一些可优化的地方等。使用explain+sql 即可查看执行计划。  
+1. id：select 查询到序列号，包含一组数字，表示查询中select子句或操作表的顺序。  
+id有三种值：决定表的读取顺序  
+（1）id相同，表执行顺序由上到下，与sql中顺序无关  
+（2）id不同，  
+如以上子查询，id的序号会递增，id值越大优先级越高，越先被执行  
+（3）id相同有不同  
+id 如果相同，可以认为是一组，从上往下顺序执行；（衍生 = derived）  
+在所有组中，id值越大，优先级越高，越先执行  
+2. select_type  一般有六种类别  
+（1）simple  
+简单查询，查询中不包含子查询或者union等任何复杂查询  
+（2）primary  
+查询中若包含任何复杂的子查询，则最外层被标记为paimary，俗称是鸡蛋壳   
+（3）subquery  
+在select或where列表包含了子查询  
+（4）derived  
+在from列表中包含的子查询被标记为derived（衍生），mysql会递归执行这些子查询，把结果放在临时表里（临时表会增加系统负担，但有时不得不用）  
+（5）union  
+若第二个select出现在union之后，则被标记为union；若union包含在from子句的子查询中，外层select将被标记为：derived  
+（6）union result  
+两种union结果的合并  
+3. table  （就是显示这一行的数据是哪一张表的，不多介绍）  
+4. type   访问类型判断（跟语句性能息息相关），显示查询使用了何种类型  不要为了优化而优化  
+从最好到最差依次是：  
+system > const  > eq_ref > ref > range > index > all(全表扫描)  
+一般来说，得保证查询级别至少达到range级别，最好能达到ref  
+（1）system   
+表只要一行记录（等于系统表），这是const类型的特例，平时不会出现，这个也可以忽略不计  
+（2）const  
+表示通过索引一次就找到了，const用于比较primary key 或者 unique索引，因为只匹配一行数据，所以很快，如将主键置于where列表中，mysql就能将该查询转换为一个常量。  
+（3）eq_ref     
+唯一性索引扫描。对于每个索引建，表中只有一条记录与之匹配。常见于主键或唯一索引扫描  
+（4）ref  
+非唯一性索引扫描，返回匹配某个单独值得所有行，本质上也是一种索引访问，它返回所有匹配某个单独值得行，然而它可能会找到多个符合条件的行，所以他应该属于查找和扫描的混合体  
+（5）range  
+只检索给定范围的行，使用一个索引来选择行，key 列显示使用了哪个索引，一般就是你的where语句中出现了between、<、>、in等的查询(mysql5.7支持in走索引)，这种范围扫描索引扫描比全表扫描好，因为它至于要开始索引的某一点，而结束语另一点，不用扫描全部索引  
+（6）index  
+full index scan(全索引扫描)，index与all区别为index类型只遍历索引树，这通常比all块，因为索引文件通常比数据文件小。（也就是说虽然all和index都是读全表，单index是从索引中读取的，而all是从硬盘中读的）  
+(7)all  
+全表扫描  
+5. possible_keys  显示可能应用在这张表中的索引，一个或多个。查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询实际使用  
+6. key   实际上使用到的索引，如果为null，则没有使用索引  
+查询中若使用了(覆盖索引)，则该索引仅出现在key列表中，  
+覆盖索引：  
+就是说我select 字段1，字段2，与我建立的符合索引个数和顺序一致。例如：建的索引 字段一   字段二，查的也是字段一、字段二。理解方式一：就是select 的数据列只用从索引中就能够取得，不必读取数据行，mysql可以利用索引返回select列表中的字段，而不必根据索引再次读取数据文件，换句话说查询列要被所建的索引覆盖，一个索引包含了（或覆盖了）满足查询结果的数据就叫做覆盖索引。  
+注意：如果要使用覆盖索引，一定要注意select列表中只取出需要的列，不可select * ，因为如果将所有字段一起做索引会导致索引文件过大，查询性能下降。索引的字段不只包含查询列，还需要包含查询条件、排序等。  
+7. key_len ：表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度，在不损失精确性的情况下，长度越短越好。  
+key_len显示的值为索引字段的最大可能长度，并非实际使用长度，即key_len是根据表定义计算而得，不是通过表内检索出的。  
+8. ref ：显示索引的哪一列被使用了，如果可能的话，是一个常数。哪些列或常量被用于查找索引列上的值  
+9. rows：根据表统计信息及索引选用情况，大致估算出找到所需的记录所需要读取的行数(越少越好)，每张表有多少行被优化器查询  
+10. extra：包含不适合在其他列显示但是很重要的额外信息  
+（1）using filrsort（九死一生）  
+说明mysql会对数据使用一个外部的索引排序，而不是按照表内的索引顺序进行读取。mysql中无法利用索引完成的排序操作称为"文件排序"，一旦出现这种情况很危险。  
+（2）using index  
+使用到了索引、这种情况是好事。表示响应的select操作中使用了覆盖索引（cocering index），避免访问了表的数据行，效率不错！如果同时出现了using where，表名索引被用来执行索引键值的查找；如果没有同时出现using where，表名索引用来读取数据而非执行查找动作。  
+（3）using where  
+使用了where条件  
+（4）using temporary（十死无生）   
+使用了临时表保存中间结果。mysql在对查询结果排序时使用临时表。常见于排序order by和分组查询 group by。（group by 最好与索引的字段、顺序一致  
 #### 根据执行计划进行SQL优化
 ### 索引  
 #### Hash索引
@@ -3391,14 +3477,14 @@ Hash Index注意点:
 #### 唯一索引
 如果确定某个数据列只包含彼此各不相同的值，在为这个数据列创建索引的时候，就应该用关键字UNIQUE把它定义为一个唯一索引，Mysql会在有新纪录插入数据表时，自动检查新纪录的这个字段的值是否已经在某个记录的这个字段里出现过了。如果是，mysql将拒绝插入那条新纪录。也就是说，唯一索引可以保证数据记录的唯一性。事实上，在许多场合，人们创建唯一索引的目的往往不是为了提高访问速度，而只是为了避免数据出现重复。
 #### 覆盖索引
-&emsp;&emsp;覆盖索引是select的数据列只用从索引中就能够取得，不必读取数据行，换句话说查询列要被所建的索引覆盖。    
+&emsp;&emsp;覆盖索引是select的数据列只用从索引中就能够取得，索引覆盖了列，不必读取数据行，换句话说查询列要被所建的索引覆盖。    
 &emsp;&emsp;理解方式一：索引是高效找到行的一个方法，但是一般数据库也能使用索引找到一个列的数据，因此它不必读取整个行。毕竟索引叶子节点存储了它们索引的数据；当能通过读取索引就可以得到想要的数据，那就不需要读取行了。一个索引包含了（或覆盖了）满足查询结果的数据就叫做覆盖索引。   
 &emsp;&emsp;理解方式二：是非聚集复合索引的一种形式，它包括在查询里的Select、Join和Where子句用到的所有列（即建索引的字段正好是覆盖查询条件中所涉及的字段，也即，索引包含了查询正在查找的数据）。   
 &emsp;&emsp;如果想要通过索引覆盖select多列，那么需要给需要的列建立一个多列索引，当然如果带查询条件，where条件要求满足最左前缀原则。      
 #### 最左前缀原则  
-&emsp;&emsp;如按A、B、C、列创建了多列索引，相当于创建了A、AB、ABC、三个索引，查询时在where条件中，只包含了A和C则只使用A列的索引，只包含了C则使用ABC列的索引。注意和条件的书写顺序无关，因为可以被优化。使用ecplain查看sql的执行计划，通多key可以看出用了哪个索引，通过key_len可以分析用到了这个索引的那些段。   
+&emsp;&emsp;如按A、B、C、列创建了多列索引，相当于创建了A、AB、ABC、三个索引，查询时在where条件中，只包含了A和C则只使用A列的索引，只包含了C或只有B、C则不使用索引。注意和条件的书写顺序无关，因为可以被优化。使用explain查看sql的执行计划，通多key可以看出用了哪个索引，通过key_len可以分析用到了这个索引的那些段。   
 #### 索引下推
-&emsp;&emsp;Mysql5.6特性，使用联合多索引，A、B、C，当通过A列完成成筛选后，不是直接去查找出数据再根据B、C列筛选，而是继续根据B、C列筛选出最终的索引后再去拉数据。
+&emsp;&emsp;Mysql5.6特性，使and限定A、B、C三列条件，当不使用索引下推时，通过索引将A符合的索引拿出来，到数据库取数据返回mysql服务端，maysql服务端再对B、C筛选。使用索引下推后，通过A筛选索引，先不去数据库拿数据，继续通过B、C筛选，得出最终符合的索引结果后再去取数据。
 ### SQL优化
 1. 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。      
 2. 应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：    
@@ -3525,7 +3611,7 @@ Query OK, 1 row affected (0.03 sec)
 + 依然存在单表数据量过大的问题。
 
 水平切分
-&emsp;&emsp;当一个应用难以再细粒度的垂直切分或切分后数据量行数依然巨大，存在单库读写，存储性能瓶颈，这时候需要进行水平切分。水平切分为库内分表和分库分表，是根据表内数据内在的逻辑关系，将同一个表按不同的条件分散到多个数据库或多表中，每个表中只包含一部分数据，从而使得单个表的数据量变小，达到分布式的效果。   
+&emsp;&emsp;当一个应用难以再细粒度的垂直切分或切分后数据量【行数】依然巨大，存在单库读写，存储性能瓶颈，这时候需要进行水平切分。水平切分为库内分表和分库分表，是根据表内数据内在的逻辑关系，将同一个表按不同的条件分散到多个数据库或多表中，每个表中只包含一部分数据，从而使得单个表的数据量变小，达到分布式的效果。   
 &emsp;&emsp;库内分表只解决单一表数据量过大的问题，但没有将表分布到不同机器的库上，因些对于减轻mysql的压力来说帮助不是很大，大家还是竞争同一个物理机的CPU、内存、网络IO，最好通过分库分表来解决。   
 水平切分优点     
 + 不存在单库数据量过大、高并发的性能瓶颈，提升系统稳定性和负载能力。
@@ -3622,7 +3708,8 @@ h(N)为卡特兰数的第N项。h(n)=C(2*n，n)/(n+1)。
 1. 每个节点是红色或者黑色的
 2. 根节点是黑色的，叶节点（NIL）是黑色的
 3. 红色节点的两个子节点都是黑色的
-4. 对每个结点，从该节点到其所有后代叶节点的简单路径上，均包含相同数目的黑色节点。（因为所有路径的黑色节点相同，且红色节点的子节点必然是黑色，于是最长的路径中，是红黑相间的(2n-1)，最短路径是纯黑大的，差为(n-1)，小于n，故没有一条路径会比其他路径长出2倍）。
+4. 根节点是黑色
+5. 对每个结点，从该节点到其所有后代叶节点的简单路径上，均包含相同数目的黑色节点。（因为所有路径的黑色节点相同，且红色节点的子节点必然是黑色，于是最长的路径中，是红黑相间的(2n-1)，最短路径是纯黑大的，差为(n-1)，小于n，故没有一条路径会比其他路径长出2倍）。
 
 &emsp;&emsp;红黑树的插入和删除时间复杂度都在O(logn)。
 红黑树和AVL平衡二叉树的区别：    
@@ -3833,6 +3920,475 @@ public static int[] cockTailSort1(int[] origin) {
         return arr;
     }
 ```
+#### 计数排序
+&emsp;&emsp;利用数组下标来确定元素的正确位置。  
+&emsp;&emsp;如果原始数列的规模是N，最大最小整数的差值是M，时间复杂度是O(N+M)，空间复杂度是O(M)。    
+局限性：  
+1. 当数列最大最小值差距过大时，并不适用于计数排序，比如给定20个随机整数，范围在0到1亿之间，此时如果使用计数排序的话，就需要创建长度为1亿的数组，不但严重浪费了空间，而且时间复杂度也随之升高。
+2. 当数列元素不是整数时，并不适用于计数排序。
+```java
+//此方法做了优化使得排序稳定
+ public static int[] countSort(int[] array) {
+        //1.得到数列的最大值与最小值，并算出差值d
+        int max = array[0];
+        int min = array[0];
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > max) {
+                max = array[i];
+            }
+            if(array[i] < min) {
+                min = array[i];
+            }
+        }
+        int d = max - min;
+        //2.创建统计数组并计算统计对应元素个数
+        int[] countArray = new int[d + 1];
+        for (int i = 0; i < array.length; i++) {
+            countArray[array[i] - min]++;
+        }
+        //3.统计数组变形，后面的元素等于前面的元素之和
+        int sum = 0;
+        for (int i = 0; i < countArray.length; i++) {
+            sum += countArray[i];
+            countArray[i] = sum;
+        }
+        //4.倒序遍历原始数组，从统计数组找到正确位置，输出到结果数组
+        int[] sortedArray = new int[array.length];
+        for (int i = array.length - 1; i > 0; i--) {
+            sortedArray[countArray[array[i] - min] - 1] = array[i];
+            countArray[array[i] - min]--;
+        }
+        return sortedArray;
+    }
+```
+#### 归并排序
+&emsp;&emsp;向不断递归二等分，再从局部到整体有序归并。    
+时间复杂度：O(nlogn）    
+```java
+//归并排序
+    public static void mergeSort(int []arr){
+        int []temp = new int[arr.length];//在排序前，先建好一个长度等于原数组长度的临时数组，避免递归中频繁开辟空间
+        mergeSort(arr,0,arr.length-1,temp);
+    }
+    private static void mergeSort(int[] arr,int left,int right,int []temp){
+        if(left<right){
+            int mid = (left+right)/2;
+            mergeSort(arr,left,mid,temp);//左边归并排序，使得左子序列有序
+            mergeSort(arr,mid+1,right,temp);//右边归并排序，使得右子序列有序
+            merge(arr,left,mid,right,temp);//将两个有序子数组合并操作
+        }
+    }
+    private static void merge(int[] arr,int left,int mid,int right,int[] temp){
+        int i = left;//左序列指针
+        int j = mid+1;//右序列指针
+        int t = 0;//临时数组指针
+        while (i<=mid && j<=right){
+            if(arr[i]<=arr[j]){
+                temp[t++] = arr[i++];
+            }else {
+                temp[t++] = arr[j++];
+            }
+        }
+        while(i<=mid){//将左边剩余元素填充进temp中
+            temp[t++] = arr[i++];
+        }
+        while(j<=right){//将右序列剩余元素填充进temp中
+            temp[t++] = arr[j++];
+        }
+        t = 0;
+        //将temp中的元素全部拷贝到原数组中
+        while(left <= right){
+            arr[left++] = temp[t++];
+        }
+    }
+```
+#### 原地归并排序
+&emsp;&emsp;在归并排序的基础上减小空间的消耗。  
+```c++
+void reverse(int *A,int n)
+{
+    int i=0;
+    int j=n-1;
+    while (i<j)
+    {
+        swap(A[i],A[j]);
+        i++;
+        j--;
+    }
+}
+
+//将数组向左循环移位i个位置
+void exchange(int *A,int n,int i)
+{
+    reverse(A,i);
+    reverse(A+i,n-i);
+    reverse(A,n);
+}
+//数组两个有序部分的归并
+void Merge(int *A,int begin,int mid,int end)
+{
+    int i=begin;
+    int j=mid;
+    int k=end;
+    
+    while (i<j&&j<=k)
+    {
+        int step=0;
+        while (i<j&&A[i]<=A[j])
+            i++;
+        while (j<=k&&A[j]<A[i])
+        {
+            j++;
+            step++;
+        }
+        exchange(A+i,j-i,j-i-step);
+        i=i+step;
+    }
+}
+
+void MergeSort(int *A,int l,int r)
+{
+    if(l<r)
+    {
+        int mid=(l+r)/2;
+        MergeSort(A,l,mid);
+        MergeSort(A,mid+1,r);
+        Merge(A,l,mid+1,r);
+    }
+}
+```
+#### 二叉排序树排序
+&emsp;&emsp;先构建排序树，再中序遍历输出。
+```c++
+template<class T>
+struct BiNode
+{
+    T data;
+    BiNode<T>*lchild,rchild;
+}
+class BiSortTree
+{
+ public:
+    BiSortTree(int a[],int n);
+    ~BiSortTree();
+    void InsertBST(BiNode<int>*root,BiNode<int>*s);
+    void DeleteBST(BiNode<int>*p,BiNode<int>*f);
+    BiNode<int>*SearchBST(BiNode<int>*root,int k);
+ private:
+    BiNode<int>*root;
+}
+
+void BiSortTree::InsertBST(BiNode<int>*root,BiNode<int>*s)
+{
+    if(root==NULL)
+        root=s;
+    else if(s->data<root->data)
+        InsertBST(root->lchild,s);
+    else
+        InsertBST(root->rchild,s);
+}   
+
+BiSortTree::BiSortTree(int r[],int n)
+{
+    for(int i=0;i<n;i++)
+    {
+        BiNode<int>s=new BiNode<int>;
+        s->data=r[i];
+        s->lchild=s->rchild=NULL;
+        InsertBST(root,s);
+    }
+}
+//在二叉排序树中删除一个节点f的左孩子节点p的算法：
+//1.若节点p是叶子，则直接删除节点p
+//2.若节点p只有左子树，则需重接p的左子树；若节点p只有右子树，则需重接p的右子树
+//3.若节点p的左右子树都不为空，则
+//  3.1查找节点p的右子树上的最左下节点s以及节点s的双亲节点par
+//  3.2将节点s的数据域替换到被删除节点p的数据域
+//  3.3若节点p的右孩子无左子树，则将s的右子树接到par的右子树上;否则将s的右子树接到节点par的左子树上
+//  3.4删除节点s；
+void BiSortTree::DeleteBST(BiNode<int>*p,BiNode<int>*f)
+{
+    if((p->lchild==NULL)&&(p->rchild)==NULL)
+    {
+        f->lchild=NULL;
+        delete p;
+    }
+    else if(p->rchild==NULL)
+    {
+        f->lchild=p->lchild;
+        delete p;
+    }
+    else if(p->lchild==NULL)
+    {
+        f->lchild=p->rchild;
+        delete p;
+    }
+    else{
+        BiNode<int>*par=p;
+        BiNode<int>*s=p->rchild;
+        while(s->lchild!=NULL)
+        {
+            par=s;
+            s=s->lchild
+        }
+        p->data=s->data;
+        if(par==p)
+            par->rchild=s->rchild;
+        else
+            par->lchild=s->rchild;
+        delete s;
+
+    }
+
+}
+BiNode<int>*BiSortTree::SearchBST(BiNode<int>*root,int k)
+{
+    if(root==NULL)
+        return NULL;
+    else if(root->data==k)
+        return root;
+    else if(root->date>k)
+        return SearchBST(root->lchild,k);
+    else if(root->data<k)
+        return SearchBST(root->rchild,k);
+}
+```
+#### 鸽巢排序  
+&emsp;&emsp;就是计数排序   
+#### 基数排序   
+基数排序 vs 计数排序 vs 桶排序   
+基数排序有两种方法：    
+这三种排序算法都利用了桶的概念，但对桶的使用方法上有明显差异：   
+基数排序：根据键值的每位数字来分配桶；  
+计数排序：每个桶只存储单一键值；   
+桶排序：每个桶存储一定范围的数值；   
++ 计数排序，是根据元素的某一特性分到指定数组指定下标的位置。
+#### 侏儒排序
+O(n^2)
+```java
+    //侏儒排序
+    public static void gnomeSort(int[] a)
+    {
+        int i = 0;
+        while (i < a.length)
+        {
+            if (i == 0 || a[i - 1] <= a[i])
+            {
+                i++;
+            }
+            else
+            {
+                int t = a[i];
+                a[i] = a[i - 1];
+                a[i - 1] = t;
+                i--;
+            }
+        }
+    }
+```
+#### 图书馆排序(Library Sort) 
+&emsp;&emsp;思路简介,大概意思是说,排列图书时,如果在每本书之间留一定的空隙,那么在进行插入时就有可能会少移动一些书,说白了就是在插入排序的基础上,给书与书之间留一定的空隙,这个空隙越大,需要移动的书就越少,这是它的思路,用空间换时间。
+#### 块排序 ？？？？ 
+#### 选择排序
+&emsp;&emsp;遍历选择出最小的放在左面
+时间复杂度：O(n)
+```java
+    public static int[] selectSort(int[] sourceArray) {
+        int[] arr = Arrays.copyOf(sourceArray, sourceArray.length);
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            if (i != min) {
+                int tmp = arr[i];
+                arr[i] = arr[min];
+                arr[min] = tmp;
+            }
+        }
+        return arr;
+    }
+```
+#### 希尔排序
+&emsp;&emsp;首先要选取步长gap的值。选取了gap之后，就将数列分成了gap个组，对于每一个组都执行直接插入排序。在排序完所有的组之后，将gap的值减半；继续对数列进行分组，然后进行排序。重复这样的操作，直到gap<0为止。此时，数列也就是有序的了。希尔排序的时间复杂度与增量(即，步长gap)的选取有关。例如，当增量为1时，希尔排序退化成了直接插入排序，此时的时间复杂度为O(N²)，而Hibbard增量的希尔排序的时间复杂度为O(N^(3/2))。   
+时间复杂度：O(n^(1.3—2))    
+```java
+public static void shellSort(int[] a) {
+		int n=a.length;
+		for (int gap = n / 2; gap > 0; gap /= 2) {
+			for (int i = 0; i < gap; i++) {
+				for (int j = i + gap; j < n; j += gap) {
+					if (a[j] < a[j - gap]) {
+						int tmp = a[j];
+						int k = j - gap;
+						while (k >= 0 && a[k] > tmp) {
+							a[k + gap] = a[k];
+							k -= gap;
+						}
+						a[k + gap] = tmp;
+					}
+				}
+			}
+		}
+	}
+```
+#### Clover排序 ？？？？
+#### 梳排序
+&emsp;&emsp;梳排序和希尔排序很类似。希尔排序是在直接插入排序的基础上做的优化，而梳排序是在冒泡排序的基础上做的优化。也是想希尔排序一样，将待排序序列通过增量分为若干个子序列，然后对子序列进行一趟冒泡排序，一步步减小增量，直至增量为1。所以梳排序的最后一次排序是冒泡排序。1.3 时效率最高。？？？
+```java
+public static int[] combSort(int[] theArray) {
+		 int theLen = theArray.length;    	
+		 int i = (int) (theLen/1.3);    	
+		 while(i >=1){    		
+			 for(int j=0; j<theLen; j++) {    			
+				 if(i+j >= theLen) {    				
+					 i = (int)(i/1.3);    				
+					 break;    			
+				 }else {    				
+					 if(theArray[j] > theArray[i+j]) {
+						 int tmp = theArray[j];    					
+						 theArray[j] = theArray[i+j];    					
+						 theArray[i+j] = tmp;    				
+					 }    			
+				 }    		
+			 }    	
+		 }    	
+		 return theArray;    
+	}
+```
+#### 堆排序
+&emsp;&emsp;先建堆，再排序，一般升序采用大顶堆，降序采用小顶堆，因为堆是完全二叉树，用数组就可方便处理，建堆后依次将根与当前堆最后一个元素交换并整理之前的堆，完成后数组就是有序的。      
+时间复杂度：O (nlgn)   
+```java
+public static void heapSort(int[] array) {
+    //构建堆
+		for (int i = array.length / 2 - 1; i >= 0; i--) {   //第一次构建时从书的倒数第二次开始往左往上调整
+			adjustHeap(array, i, array.length);
+		}
+        //交换、调整
+		for (int j = array.length - 1; j > 0; j--) {
+			swap(array, 0, j);
+			adjustHeap(array, 0, j);        //交换后将根节点调整到叶子去，这里要执行n次，每次一定是从根节点到叶子 logn次，所以复杂度 nlogn
+		}
+	}
+	public static void adjustHeap(int[] array, int i, int length) {   //从当前节点沿着子节点一直调整到叶子或者不需要调整
+		int temp = array[i];    //记录父节点值
+		for (int k = 2 * i + 1; k < length; k = 2 * k + 1) {
+			if (k + 1 < length && array[k] < array[k + 1]) {    //找出子节点中较大的
+				k++;
+			}
+			if (array[k] > temp) {    //如果父节点较小则交换
+				swap(array, i, k);
+				i = k;
+			} else {
+				break;
+			}
+		}
+	}
+	public static void swap(int[] arr, int a, int b) {
+		int temp = arr[a];
+		arr[a] = arr[b];
+		arr[b] = temp;
+	}
+```
+#### 平滑排序？？？？
+1．先从数列中取出一个数作为基准数。    
+2．分区过程，将比这个数大的数全放到它的右边，小于或等于它的数全放到它的左边。     
+3．再对左右区间重复第二步，直到各区间只有一个数。   
+时间复杂度：O(nlogn)   
+```java
+public static void quickSort(int s[], int l, int r){
+	    if (l < r)
+	    {
+	        //Swap(s[l], s[(l + r) / 2]); //将中间的这个数和第一个数交换 参见注1
+	        int i = l, j = r, x = s[l];
+	        while (i < j)
+	        {
+	            while(i < j && s[j] >= x) // 从右向左找第一个小于x的数
+	                j--;  
+	            if(i < j) 
+	                s[i++] = s[j];
+	            
+	            while(i < j && s[i] < x) // 从左向右找第一个大于等于x的数
+	                i++;  
+	            if(i < j) 
+	                s[j--] = s[i];
+	        }
+	        s[i] = x;
+	        quickSort(s, l, i - 1); // 递归调用 
+	        quickSort(s, i + 1, r);
+	    }
+	}
+```
+#### 内省排序
+&emsp;&emsp;快速排序是一种很快的算法，它平均的时间复杂度WieO(nlgn)， 最坏时间复杂度为O(n^2)。但是快排有很多改良版，其中一种就是内省式的快排，在STL中的快快排使用的就是这种算法。 
+1.为什么需要这种算法    
+&emsp;&emsp;因为快排在面对小数组（比如大小为10的数组）且基本有序的情况下，它的表现还没插入排序要好。因为数组的基本有序，使得插入排序不用很多次的执行元素的移动，并且可以避免递归。 在SGI STL中的函数sort使用的排序算法其实就是内省式的排序算法。内省的排序算法是基于快排实现的。假设待排序的数组大小为n，去一个k值，使得k为满足2^k <= n的最大值。k为最大的递归层次、 为什么要设置最大递归层次呢？ 因为快排的递归层次过深的时候，很可能会退化成O(n^2)。内省式排序使用k来控制快排的递归深度，当快排的递归深度到达k的时候选择使用heap排序。    
+2.为什么不一开始就使用heap排序    
+&emsp;&emsp;heap排序在平均时间复杂度是O(nlgn)，最坏情况也是O(nlgn)，看起来要比快排要快。但是实际上，快排是要比heap排序要快，第一个原因是：heap排序虽然和快排在平均情况下的时间复杂度是O(nlgn)，但是heap排序的时间常数要比快排的时间常数要大。第二个原因是：据统计，快排的最坏情况在是很少发生的。第三个原因是：快排能够比较好的吻合程序的空间局部性原理，因为它操作的基本都是相邻的元素（虚拟存储器的设计理论基础中就有程序的时间局部性和空间局部性），能够减少内存缺页中断的发生次数。    
+3.为什么要使用heap排序呢    
+&emsp;&emsp;因为在递归层次太深的时候，就意味着发生最坏情况的概率大大的提升了，这时候因为heap排序的最坏情况下的时间复杂度是O(nlgn)比快排的O(n^2)要好，因此使用heap排序能更好优化排序效率。    
+#### 耐心排序  
+首先使用桶排序，排序之后每个桶中数据相对有序，这样再使用插入排序，简化了问题，速度变的更快  
+我们通过例子来讲解下，假设我们有数组[6 4 5 1 8 7 2 3]  
+第一步：因为此前还没有桶，则建立一个桶，我们命名为桶1,从上面取出第一个数字 6，然后将6放入到桶中  
+第二步：我们使用第二个值4，然后遍历现有的桶，遍历的工程中先遇到桶1，我们发现桶1中最上面的元素是6,4比6大，则6下沉，有桶【4,6】  
+第三步：我们使用第三个值5，然后遍历现有的桶，因为第一个桶第一个元素是4，比5小，所以重新开一个桶【5】，之后共有两个桶【4,5】【5】  
+第四部：我们使用第四个值1，然后遍历现有的桶，因为第一个桶第一个元素是4，比1大，所以放到桶1【4,6】最前面，从而形成【1,4,6】【5】    
+第五步：我们使用第五个元素，然后遍历现有的桶，第一个桶第一个元素是1，第二个桶第一个元素是5，都比8小，所以需要重新开一个桶【8】，此时共有桶【1,4,6】【5】【8】   
+第六步：使用同样的方法，之后桶是【1,4,6】【5】【7，8】   
+第七步：使用同样的方法，之后桶是【1,4,6】【2，5】【7，8】    
+第八步：使用同样的方法，之后桶是【1,4,6】【2，5】【3，7，8】    
+注意：遍历的数组，只跟各个桶的第一个元素做比较，这样保证各个桶元素有序    
+```java
+public static int[] patienceSort(int[] theArray) {
+		List<List<Integer>> new_list = new ArrayList<>();
+		for (int i = 0; i < theArray.length; i++) {
+			List<Integer> bucket_list = new ArrayList<>();
+			if (i == 0) {
+				bucket_list.add(theArray[i]);
+				new_list.add(bucket_list);
+			} else {
+				boolean is_ok = false;
+				for (int j = 0; j < new_list.size(); j++) {
+					if (theArray[i] < (int) ((List) new_list.get(j)).get(0)) {
+						((List) new_list.get(j)).add(0, theArray[i]);
+						is_ok = true;
+						break;
+					}
+				}
+				if (!is_ok) {
+					bucket_list.add(theArray[i]);
+					new_list.add(bucket_list);
+				}
+			}
+		}
+		int[] ok_list = new int[theArray.length];
+		int q = 0;
+		for (int m = 0; m < new_list.size(); m++) {
+			for (int n = 0; n < ((List) new_list.get(m)).size(); n++) {
+				ok_list[q] = (int) ((List) new_list.get(m)).get(n);
+				q++;
+			}
+		}
+		int n = ok_list.length;
+		int tmp;
+		int j;
+		for (int i = 1; i < n; i++) {
+			tmp = ok_list[i];
+			for (j = i - 1; j >= 0 && ok_list[j] > tmp; j--) {
+				ok_list[j + 1] = ok_list[j];
+			}
+			ok_list[j + 1] = tmp;
+		}
+		return ok_list;
+	}
+```
+
+
+
 
 
 
@@ -3976,7 +4532,8 @@ https://www.cnblogs.com/xiaohouye/p/11169098.html
 https://blog.csdn.net/wx145/article/details/82839419   
 
 数据库事务隔离级别  
-https://baijiahao.baidu.com/s?id=1611918898724887602&wfr=spider&for=pc  
+https://baijiahao.baidu.com/s?id=1611918898724887602&wfr=spider&for=pc    
+https://blog.csdn.net/han1196639488/article/details/77442946
 
 binlog
 https://www.cnblogs.com/rjzheng/p/9721765.html   
@@ -3999,3 +4556,6 @@ https://www.cnblogs.com/-citywall123/p/11788764.html
 
 堆  
 https://www.cnblogs.com/wangchaowei/p/8288216.html
+
+ReentrantLock实现原理
+https://www.cnblogs.com/xrq730/p/4979021.html
