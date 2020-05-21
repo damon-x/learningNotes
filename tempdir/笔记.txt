@@ -1,0 +1,9 @@
+1、IO缓冲区（buffer）的原理及作用
+缓冲区就是内存里的一块区域，把数据先存内存里，然后一次性写入，类似于数据库的批量操作，这样大大提高高了数据的读写速率。
+现在的外设控制器都有自己的缓冲池，如磁盘和网卡，通过缓冲IO的方式读取时，如BufferedInputStream里就有个buf块，CPU可把外设里的缓冲池available的字节块整块读入该buf内存。
+https://blog.csdn.net/Zhi_19950628/article/details/88397337
+
+2、查看DC状态
+jstat -gc 12538 5000
+即会每5秒一次显示进程号为12538的java进成的GC情况
+https://www.cnblogs.com/qmfsun/p/5601734.html

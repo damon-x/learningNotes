@@ -1,0 +1,16 @@
+建表  
+CREATE TABLE tutorials_tbl(
+   -> tutorial_id INT NOT NULL AUTO_INCREMENT,
+   -> tutorial_title VARCHAR(100) NOT NULL,
+   -> tutorial_author VARCHAR(40) NOT NULL,
+   -> submission_date DATE,
+   -> PRIMARY KEY ( tutorial_id )
+   -> );   
+
+增加列  
+alter table TABLE_NAME add column NEW_COLUMN_NAME varchar(45) not null;    
+alter table TABLE_NAME add column NEW_COLUMN_NAME varchar(45) not null after COLUMN_NAME;
+alter table TABLE_NAME add column NEW_COLUMN_NAME varchar(45) not null first;
+
+增加数据
+insert into book (name,price) values ("first-book",2.37);

@@ -1,0 +1,6 @@
+https://www.jianshu.com/p/92c4bdced15d
+如何保证数据库集群中ID的唯一性，假设每秒钟并发20万次。
+
+
+file:///C:/Users/ROCK/Desktop/面试合集.html
+绍下netty的线程

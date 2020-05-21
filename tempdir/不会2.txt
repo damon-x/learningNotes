@@ -1,0 +1,11 @@
+分布式相关的知识
+1cap
+2base
+3一致性协议
+4一致性算法paxos和raft，zab
+5 分布式缓存，session，消息队列。
+6 负载均衡，分布式数据库，hadoop，zk。
+7 云计算，大数据。
+
+脑裂问题怎么办
+https://blog.csdn.net/varyall/article/details/80427606

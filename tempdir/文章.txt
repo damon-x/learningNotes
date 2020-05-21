@@ -1,0 +1,41 @@
+
+
+海量数据和高并发的主要解决方案
+https://www.cnblogs.com/LUO77/p/8567623.html
+
+
+海量数据存储 - 性能瓶颈 - 解决方案
+https://blog.csdn.net/CatStarXcode/article/details/79701464
+
+
+设计缓存系统时应该注意的几点问题
+https://blog.csdn.net/wuxing26jiayou/article/details/79544410
+
+TCP连接特点
+https://blog.csdn.net/YL970302/article/details/83047243
+
+TCP如何保证传输可靠
+（TCP 的可靠性含义： 接收方收到的数据是完整， 有序， 无差错的。
+UDP 不可靠性含义： 接收方接收到的数据可能存在部分丢失， 顺序也不一定能保证。）
+https://www.jianshu.com/p/6aac4b2a9fd7
+
+为什么三次？ 只回答seq没被确认
+
+
+
+jdk动态代理原理
+https://www.cnblogs.com/hetutu-5238/p/11988946.html
+
+cglib
+https://www.cnblogs.com/monkey0307/p/8328821.html
+
+变量初始化顺序
+https://www.cnblogs.com/luckyplj/p/10294369.html
+
+spring IOC
+https://javadoop.com/post/spring-ioc
+https://blog.csdn.net/qq_34203492/article/details/83865450      
+
+
+ConcurrentHashMap的实现原理(JDK1.7和JDK1.8)
+https://baijiahao.baidu.com/s?id=1617089947709260129&wfr=spider&for=pc

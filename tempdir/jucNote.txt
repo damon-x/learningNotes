@@ -1,0 +1,4 @@
+1. ArrayList
+    1.1 初始化一个size为10的元素为Object的数组，扩容每次扩大  1/2 ，向下取整。
+    1.2 线程不安全。
+2. HashMap 底层是HashMap
